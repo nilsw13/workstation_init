@@ -8,7 +8,6 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Variables
-DEBIAN_FRONTEND=noninteractive
 APP_USER="${SUDO_USER:-$(logname 2>/dev/null || echo root)}"
 SYM_SRC_DIR="$(eval echo ~${APP_USER})"
 BIN_DIR="/usr/local/bin"
@@ -22,7 +21,6 @@ apt-get install -y curl wget git unzip zip build-essential ca-certificates gnupg
 
 echo "==> Apache + PHP"
 apt-get install -y apache2
-# Choisis mod_php OU php-fpm. Ici mod_php pour coller à ton script initial.
 apt-get install -y php-cli php-common php-mysql php-xml php-mbstring php-curl php-zip php-gd libapache2-mod-php
 a2enmod php* >/dev/null || true
 systemctl enable --now apache2
@@ -31,7 +29,7 @@ echo "==> MySQL Server/Client"
 apt-get install -y mysql-server mysql-client
 systemctl enable --now mysql
 
-# Sécurisation interactive (tu peux automatiser si besoin)
+# Sécurisation interactive
 echo "==> Pense à lancer : mysql_secure_installation"
 
 echo "==> Composer (avec vérif de signature)"
@@ -46,7 +44,7 @@ rm -f composer-setup.php
 composer --version
 
 echo "==> Symfony CLI"
-# Installateur officiel (place binaire dans ~/.symfony/bin/symfony pour l'utilisateur qui lance)
+# Installateur officiel
 sudo -u "$APP_USER" bash -lc 'wget -qO- https://get.symfony.com/cli/installer | bash'
 if [ -x "$SYM_SRC_DIR/.symfony/bin/symfony" ]; then
   install -m 0755 "$SYM_SRC_DIR/.symfony/bin/symfony" "$BIN_DIR/symfony"
